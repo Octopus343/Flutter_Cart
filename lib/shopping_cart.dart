@@ -7,7 +7,7 @@ List<CartTransaction> items = [];
 class CartTransaction {
   final String id;
   final String title;
-  final double amount;
+  final String amount;
   final String info;
 
   CartTransaction({
@@ -21,13 +21,6 @@ class CartTransaction {
   Future<void> fetchTransactions() async {
     final dataList = await DBHelper.getData('user_cart');
     debugPrint('before items are: ' + dataList.toString());   
-    // items = List.generate(dataList.length, (i) {
-    //     CartTransaction(
-    //         id: dataList[i]['id'],
-    //         title: dataList[i]['title'],
-    //         amount: dataList[i]['amount'],
-    //         info: dataList[i]['info'],
-    //     );
         items = dataList
         .map(
           (item) => CartTransaction(
@@ -38,14 +31,10 @@ class CartTransaction {
               ),
         ).toList();
         debugPrint('items are :' + items.toString());  
-        return items;
-     
-    // }
-        // );     
+        return items;   
   }
 
 class ShoppingCartScreen extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,6 +53,7 @@ class ShoppingCartScreen extends StatelessWidget {
                         itemCount: items.length,
                         itemBuilder: (ctx, i) => ListTile(
                               title: Text(items[i].title),
+                              subtitle: Text(items[i].info),
                               onTap: () {
                                 // Go to detail page ...
                               },
