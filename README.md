@@ -1,6 +1,6 @@
-# Flutter_project2
+# Flutter_Cart
 
-A new Flutter project.
+A new Flutter cart project.
 
 ## Getting Started
 
