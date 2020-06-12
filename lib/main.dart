@@ -5,6 +5,7 @@ import './helpers/db_helpers.dart';
 
 void main() => runApp(MyApp());
 
+
 class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
@@ -39,6 +40,7 @@ class _MyAppState extends State<MyApp> {
 
 class MyHomePage extends StatelessWidget {
 
+
   void selectShoppingCart(BuildContext ctx) {
     Navigator.of(ctx).push(
       MaterialPageRoute(
@@ -66,6 +68,21 @@ class MyHomePage extends StatelessWidget {
     );
   }
 
+      Future<String> fetchItemNumber() async {
+    final dataList = await DBHelper.getData('user_cart'); 
+        items = dataList
+        .map(
+          (item) => CartTransaction(
+                id: item['id'],
+                title: item['title'],
+                amount: item['amount'],
+                info: item['info'],
+              ),
+        ).toList(); 
+        final itemCount = items.length.toString();
+        return itemCount;   
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,10 +90,41 @@ class MyHomePage extends StatelessWidget {
         title: Text('Sephora Store'),
         backgroundColor: Theme.of(context).primaryColor,
         actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.shopping_cart),
-            onPressed: () => selectShoppingCart(context),
-          ),
+          Stack(children: <Widget>[
+            IconButton(
+              icon: Icon(Icons.shopping_cart),
+              onPressed: () => selectShoppingCart(context),
+            ),
+            Positioned(
+              top: 20,
+              child: Container(
+                child: 
+                FutureBuilder(
+        future: fetchItemNumber(),
+        builder: (ctx, snapshot) =>
+            snapshot.connectionState == ConnectionState.waiting
+                ? 
+                  CircularProgressIndicator() 
+                : 
+                  Text(
+                  itemCount,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize:17,
+                  ),
+                ), 
+                ),
+                width: 20,
+                height: 20,
+                decoration: new BoxDecoration(
+                  color: Colors.blueAccent,
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ),
+          ])
         ],
       ),
       body: SingleChildScrollView(
@@ -112,63 +160,60 @@ class MyHomePage extends StatelessWidget {
                             ),
                           ),
                         ),
-                        
                         Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  tx.title,
-                                  textAlign: TextAlign.start,
-                                  style: Theme.of(context).textTheme.title,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                tx.title,
+                                textAlign: TextAlign.left,
+                                style: Theme.of(context).textTheme.title,
+                              ),
+                              Text(
+                                tx.info,
+                                textAlign: TextAlign.start,
+                                style: TextStyle(
+                                  color: Colors.grey,
                                 ),
-                                Text(
-                                  tx.info,
-                                  textAlign: TextAlign.start,
-                                  style: TextStyle(
-                                    color: Colors.grey,
+                              ),
+                            ],
+                          ),
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: <Widget>[
+                                MaterialButton(
+                                  height: 20,
+                                  minWidth: 15,
+                                  color: Colors.grey[200],
+                                  child: Icon(Icons.add_shopping_cart),
+                                  splashColor: Colors.blue,
+                                  onPressed: () => selectedItemNow(
+                                    tx.id,
+                                    tx.title,
+                                    tx.amount.toStringAsFixed(2),
+                                    tx.info,
                                   ),
                                 ),
                               ],
                             ),
-                          
-                        ), 
-                          Column(
+                            Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: <Widget>[
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: <Widget>[
-                                      MaterialButton(
-                                      height: 20,
-                                      minWidth: 15, 
-                                      color: Colors.grey[200], 
-                                      child: Icon(Icons.add_shopping_cart),
-                                      splashColor: Colors.blue,
-                                      onPressed: () => selectedItemNow(
-                                        tx.id,
-                                        tx.title,
-                                        tx.amount.toString(),
-                                        tx.info,
-                                      ),
-                                    ),    
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: <Widget>[
-                                    MaterialButton(
-                                      height: 20,
-                                      minWidth: 15, 
-                                      child: Text('Qty'),
-                                      color: Colors.grey[200], 
-                                      splashColor: Colors.blue,
-                                      onPressed: () {}
-                                      ),
-                                  ],
-                                ),
+                                MaterialButton(
+                                    height: 20,
+                                    minWidth: 15,
+                                    child: Text('Qty'),
+                                    color: Colors.grey[200],
+                                    splashColor: Colors.blue,
+                                    onPressed: () {}),
                               ],
-                          ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),

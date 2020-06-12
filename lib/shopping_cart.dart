@@ -19,8 +19,7 @@ class CartTransaction {
 }
 
   Future<void> fetchTransactions() async {
-    final dataList = await DBHelper.getData('user_cart');
-    debugPrint('before items are: ' + dataList.toString());   
+    final dataList = await DBHelper.getData('user_cart'); 
         items = dataList
         .map(
           (item) => CartTransaction(
@@ -50,10 +49,12 @@ class ShoppingCartScreen extends StatelessWidget {
                   )
                 : Center(
                     child: ListView.builder(
+                        padding: EdgeInsets.all(10),
                         itemCount: items.length,
                         itemBuilder: (ctx, i) => ListTile(
                               title: Text(items[i].title),
                               subtitle: Text(items[i].info),
+                              trailing: Text('\$' + items[i].amount),
                               onTap: () {
                                 // Go to detail page ...
                               },
