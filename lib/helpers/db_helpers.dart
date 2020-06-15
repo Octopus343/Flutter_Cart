@@ -21,6 +21,13 @@ class DBHelper {
       conflictAlgorithm: sql.ConflictAlgorithm.replace,
     );
   }
+
+  static Future<void> remove(String table, String id) async {
+    final db = await DBHelper.database();
+    await db.execute(
+      'DELETE FROM ' + table + ' WHERE id = ' + id
+    );
+  }
   
   static Future<List<Map<String, dynamic>>> getData(String table) async {
     final db = await DBHelper.database();

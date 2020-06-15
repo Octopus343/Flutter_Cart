@@ -18,20 +18,20 @@ class CartTransaction {
   });
 }
 
-  Future<void> fetchTransactions() async {
-    final dataList = await DBHelper.getData('user_cart'); 
-        items = dataList
-        .map(
-          (item) => CartTransaction(
-                id: item['id'],
-                title: item['title'],
-                amount: item['amount'],
-                info: item['info'],
-              ),
-        ).toList();
-        debugPrint('items are :' + items.toString());  
-        return items;   
-  }
+Future<void> fetchTransactions() async {
+  final dataList = await DBHelper.getData('user_cart');
+  items = dataList
+      .map(
+        (item) => CartTransaction(
+          id: item['id'],
+          title: item['title'],
+          amount: item['amount'],
+          info: item['info'],
+        ),
+      )
+      .toList();
+  return items;
+}
 
 class ShoppingCartScreen extends StatelessWidget {
   @override
@@ -49,17 +49,43 @@ class ShoppingCartScreen extends StatelessWidget {
                   )
                 : Center(
                     child: ListView.builder(
-                        padding: EdgeInsets.all(10),
-                        itemCount: items.length,
-                        itemBuilder: (ctx, i) => ListTile(
-                              title: Text(items[i].title),
-                              subtitle: Text(items[i].info),
-                              trailing: Text('\$' + items[i].amount),
-                              onTap: () {
-                                // Go to detail page ...
-                              },
-                            ),
+                      padding: EdgeInsets.all(10),
+                      itemCount: items.length,
+                      itemBuilder: (ctx, i) => Dismissible(
+                        direction: DismissDirection.endToStart,
+                        key: ValueKey(ctx),
+                        background: Container(
+                          color: Colors.red,
+                          child: Container(
+                              alignment: Alignment.centerRight,
+                              padding: EdgeInsets.only(right: 20),
+                              child: Icon(
+                                Icons.cancel,
+                                color: Colors.white,
+                              )),
+                        ),
+                        onDismissed: (direction) {
+                          debugPrint('i is: ' + i.toString());
+                          debugPrint('Count data is: ' + items[i].id.toString());
+                          items.removeAt(i);
+                          //DBHelper.remove('user_cart', items[i].id);
+                        },
+                        child: ListTile(
+                          onLongPress: () => {},
+                          title: Text(items[i].title),
+                          subtitle: Row(
+                            children: <Widget>[
+                              Text('#' + items[i].id + ' '),
+                              Text(items[i].info),
+                            ],
+                          ),
+                          trailing: Text('\$' + items[i].amount),
+                          onTap: () {
+                            // Go to detail page ...
+                          },
+                        ),
                       ),
+                    ),
                   ),
       ),
     );

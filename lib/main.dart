@@ -107,7 +107,7 @@ class MyHomePage extends StatelessWidget {
                   CircularProgressIndicator() 
                 : 
                   Text(
-                  itemCount,
+                  snapshot.data,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.white,
