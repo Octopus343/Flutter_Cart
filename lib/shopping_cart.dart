@@ -67,8 +67,8 @@ class ShoppingCartScreen extends StatelessWidget {
                         onDismissed: (direction) {
                           debugPrint('i is: ' + i.toString());
                           debugPrint('Count data is: ' + items[i].id.toString());
-                          items.removeAt(i);
-                          //DBHelper.remove('user_cart', items[i].id);
+                          DBHelper.remove('user_cart', items[i].id.toString());
+                          items.removeAt(i);                 
                         },
                         child: ListTile(
                           onLongPress: () => {},
