@@ -33,7 +33,12 @@ Future<void> fetchTransactions() async {
   return items;
 }
 
-class ShoppingCartScreen extends StatelessWidget {
+class ShoppingCartScreen extends StatefulWidget {
+  @override
+  _ShoppingCartScreenState createState() => _ShoppingCartScreenState();
+}
+
+class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,10 +70,12 @@ class ShoppingCartScreen extends StatelessWidget {
                               )),
                         ),
                         onDismissed: (direction) {
+                          setState((){
                           debugPrint('i is: ' + i.toString());
                           debugPrint('Count data is: ' + items[i].id.toString());
                           DBHelper.remove('user_cart', items[i].id.toString());
-                          items.removeAt(i);                 
+                          items.removeAt(i);  
+                          });           
                         },
                         child: ListTile(
                           onLongPress: () => {},
